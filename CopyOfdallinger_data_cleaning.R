@@ -100,12 +100,13 @@ for (i in 1:nrow(full_data)) {
 }
 
 
-#figure out total copied (how many times they copied others)
+#figure out total copied (how many times they copied others across both rounds)
+#note this doesn't correspond to c_copies, because that is how many times others copied them in round 1 only. 
 full_data$t_copied <- rep(-666, nrow(full_data))
 u_origins <- unique(full_data$u_origin)
 for (i in 1:length(u_origins)) {  
   u_origin <- u_origins[i]
-  relevant_rows <- c(1:nrow(full_data))[full_data$u_origin == u_origin & full_data$Contents != "Ask Someone Else"]
+  relevant_rows <- c(1:nrow(full_data))[full_data$u_origin == u_origin & full_data$is_model_id == FALSE]
   subset <- full_data[relevant_rows,]
   t_copied <- cumsum(subset$copying)
   full_data$t_copied[relevant_rows] <- t_copied
