@@ -32,6 +32,7 @@ full_data$u_origin <- match(full_data$u_origin, current_u_origins)
 
 #figure out cumulative ASOCIAL score in Round 1 
 #(equivalent to asoc_score in property1 of node table) 
+# now need to do this per topic (can we not get this from the node table?)
 full_data$c_a_score_r1 <- rep(-666, nrow(full_data))
 u_origins <- unique(full_data$u_origin)
 for (i in 1:length(u_origins)) {
@@ -40,6 +41,59 @@ for (i in 1:length(u_origins)) {
   subset <- full_data[relevant_rows,]
   c_a_score_r1 <- cumsum(subset$score * (1-subset$copying) * (subset$round==1))
   full_data$c_a_score_r1[relevant_rows] <- c_a_score_r1
+}
+
+
+#figure out cumulative asocial GEOG score in Round 1 
+#(equivalent to asoc_score_geog in property1 of node table) 
+# now need to do this per topic (can we not get this from the node table?)
+full_data$c_a_geog_score_r1 <- rep(-666, nrow(full_data))
+u_origins <- unique(full_data$u_origin)
+for (i in 1:length(u_origins)) {
+  u_origin <- u_origins[i]
+  relevant_rows <- c(1:nrow(full_data))[full_data$u_origin == u_origin]
+  subset <- full_data[relevant_rows,]
+  c_a_geog_score_r1 <- cumsum(subset$score * (1-subset$copying) * (subset$round==1) * (subset$topic=="Geography"))
+  full_data$c_a_geog_score_r1[relevant_rows] <- c_a_geog_score_r1
+}
+
+#figure out cumulative asocial LANGUAGE score in Round 1 
+#(equivalent to asoc_score_lang in property1 of node table) 
+# now need to do this per topic (can we not get this from the node table?)
+full_data$c_a_lang_score_r1 <- rep(-666, nrow(full_data))
+u_origins <- unique(full_data$u_origin)
+for (i in 1:length(u_origins)) {
+  u_origin <- u_origins[i]
+  relevant_rows <- c(1:nrow(full_data))[full_data$u_origin == u_origin]
+  subset <- full_data[relevant_rows,]
+  c_a_lang_score_r1 <- cumsum(subset$score * (1-subset$copying) * (subset$round==1) * (subset$topic=="Language"))
+  full_data$c_a_lang_score_r1[relevant_rows] <- c_a_lang_score_r1
+}
+
+#figure out cumulative asocial WEIGHT score in Round 1 
+#(equivalent to asoc_score_weight in property1 of node table) 
+# now need to do this per topic (can we not get this from the node table?)
+full_data$c_a_wght_score_r1 <- rep(-666, nrow(full_data))
+u_origins <- unique(full_data$u_origin)
+for (i in 1:length(u_origins)) {
+  u_origin <- u_origins[i]
+  relevant_rows <- c(1:nrow(full_data))[full_data$u_origin == u_origin]
+  subset <- full_data[relevant_rows,]
+  c_a_wght_score_r1 <- cumsum(subset$score * (1-subset$copying) * (subset$round==1) * (subset$topic=="Weight"))
+  full_data$c_a_wght_score_r1[relevant_rows] <- c_a_wght_score_r1
+}
+
+#figure out cumulative asocial ART score in Round 1 
+#(equivalent to asoc_score_art in property1 of node table) 
+# now need to do this per topic (can we not get this from the node table?)
+full_data$c_a_art_score_r1 <- rep(-666, nrow(full_data))
+u_origins <- unique(full_data$u_origin)
+for (i in 1:length(u_origins)) {
+  u_origin <- u_origins[i]
+  relevant_rows <- c(1:nrow(full_data))[full_data$u_origin == u_origin]
+  subset <- full_data[relevant_rows,]
+  c_a_art_score_r1 <- cumsum(subset$score * (1-subset$copying) * (subset$round==1) * (subset$topic=="Art"))
+  full_data$c_a_art_score_r1[relevant_rows] <- c_a_art_score_r1
 }
 
 #figure out total score including copies 
@@ -68,6 +122,25 @@ for (i in 1:nrow(full_data)) {
     copying_decisions$Contents == as.character(full_data$Origin[i])
   ,])
 }
+
+#create function for cumulative topic copies:
+topic_Copies <- function(x) {
+all_node_ids <- unique(full_data$Origin)
+full_data$is_model_id <- (full_data$copying == TRUE & full_data$Contents %in% all_node_ids)
+copying_decisions <- full_data[full_data$is_model_id == TRUE,]
+for (i in 1:nrow(full_data)) {
+  x[i] <- nrow(copying_decisions[
+    copying_decisions$round == 1 &
+      copying_decisions$u_network == full_data$u_network[i] &
+      copying_decisions$topic == full_data$topic[i] &
+      copying_decisions$uid < full_data$uid[i] & 
+      copying_decisions$Contents == as.character(full_data$Origin[i])
+    ,])
+  }
+}
+
+full_data$geog_copies <- topic_Copies(geog)
+
 
 #figure out if they copied the highest scorer: 
 full_data$copied_successful <- rep(NA, nrow(full_data))
