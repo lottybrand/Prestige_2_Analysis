@@ -123,23 +123,24 @@ for (i in 1:nrow(full_data)) {
   ,])
 }
 
+
 #create function for cumulative topic copies:
-topic_Copies <- function(x) {
-all_node_ids <- unique(full_data$Origin)
-full_data$is_model_id <- (full_data$copying == TRUE & full_data$Contents %in% all_node_ids)
-copying_decisions <- full_data[full_data$is_model_id == TRUE,]
-for (i in 1:nrow(full_data)) {
-  x[i] <- nrow(copying_decisions[
-    copying_decisions$round == 1 &
-      copying_decisions$u_network == full_data$u_network[i] &
-      copying_decisions$topic == full_data$topic[i] &
-      copying_decisions$uid < full_data$uid[i] & 
-      copying_decisions$Contents == as.character(full_data$Origin[i])
-    ,])
+topic_copies <- function(x) {
+  full_data[,paste("c_copies_",x, sep="")] <<- rep(-666, nrow(full_data))
+  for (i in 1:nrow(full_data)) {
+    full_data[i,paste("c_copies_",x, sep="")] <<- nrow(copying_decisions[
+      copying_decisions$round == 1 &
+        copying_decisions$u_network == full_data$u_network[i] &
+        copying_decisions$topic == x &
+        copying_decisions$uid < full_data$uid[i] & 
+        copying_decisions$Contents == as.character(full_data$Origin[i])
+      ,])
   }
 }
-
-full_data$geog_copies <- topic_Copies(geog)
+topics <- c("Geography", "Art", "Language", "Weight")
+for (topic in topics) {
+  topic_copies(topic)
+}
 
 
 #figure out if they copied the highest scorer: 
