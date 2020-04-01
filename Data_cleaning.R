@@ -205,7 +205,7 @@ asocialOnly <- full_data[full_data$copying=="FALSE",]
 copyOnly <-full_data[full_data$copying=="TRUE",]
 
 #####
-##### Subset for seeing score info (Prediction 1)
+##### Subset for seeing score info (Prediction 2)
 #####
 
 # need to subset only copying instances and only when score info is visible (i.e. round 1 of condition B&C, and when chosen in round 2...)
@@ -216,25 +216,23 @@ scoreChoice <- model_ids[((!model_ids$condition=="a")&(model_ids$round==1))|(mod
 
 
 #####
-##### Subset for seeing prestige info (Prediction 2)
+##### Subset for seeing prestige info (Prediction 3)
 #####
 
 prestigeChoice <- model_ids[model_ids$info_chosen =="Times chosen in Round 1",]
 
 
 #####
-##### Subset of info chosen for Predictions 3,4,5 (models 3 and 3.1):
+##### Subset of info chosen for Predictions 4,5,6 (model 3 ):
 #####
 
 #just the contets of the copying decision (not the nodeIDS) 
 copyOnlyContents <- copyOnly[!copyOnly$is_model_id==TRUE,]
 
 infoChosen <- copyOnlyContents[copyOnlyContents$round==2,]
-infoChosen$chosePrestige <- ifelse(infoChosen$info_chosen=="Times chosen in Round 1",1,0)
-
-# make Condition B the baseline for old approach:
-#infoChosen$CondA <- ifelse(infoChosen$condition =="a", 1, 0)
-#infoChosen$CondC <- ifelse(infoChosen$condition =="c", 1, 0)
+infoChosen$chosePrdicted <- ifelse((infoChosen$info_chosen=="Times Chosen on This Topic" & infoChosen$condition!="B"),1,
+                                   ifelse((infoChosen$info_chosen=="Times Chosen Altogether" & infoChosen$condition="B"),1,0))
+                                   
 
 ##### 
 ##### Prediction 6 (model4): 

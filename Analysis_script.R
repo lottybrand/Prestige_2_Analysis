@@ -11,7 +11,7 @@
 
 #####
 #####
-##### Prediction 1: Participants copy the highest scoring participant out of those available in Conditions B & C
+##### Prediction 2: Participants copy the highest scoring participant out of those available in Conditions B & C
 #####
 #####
 #####
@@ -59,7 +59,7 @@ precis(model1)
 #####
 #####
 #####
-##### Prediction 2: Participants copy the most-copied participant out of those available in Round 2 of Conditions B & C 
+##### Prediction 3: Participants copy the most-copied participant out of those available in Round 2 of Conditions B & C 
 #####
 #####
 #####
@@ -103,50 +103,10 @@ model2 <- map2stan(
 
 precis(model2)
 
-#now just for condition A prestige copying:
-prestigeChoiceA <- model_ids[model_ids$info_chosen =="Times chosen in Round 1" & model_ids$condition=="a",]
-prestigeChoiceA<- as.data.frame(prestigeChoiceA)
-
-#need to reindex again
-Nppts = length(unique(prestigeChoiceA$u_origin))
-Oldppt <- prestigeChoiceA$u_origin
-pptIndex <- array(0,length(prestigeChoiceA$u_origin))
-for (index in 1:Nppts){
-  pptIndex[Oldppt == unique(Oldppt)[index]] = index
-}
-prestigeChoiceA$pptIndex <- pptIndex
-
-#make group index contiguous:
-Ngroups = length(unique(prestigeChoiceA$u_network))
-Oldgroup <- prestigeChoiceA$u_network
-groupIndex <- array(0,length(prestigeChoiceA$u_network))
-for (index in 1:Ngroups){
-  groupIndex[Oldgroup == unique(Oldgroup)[index]] = index
-}
-prestigeChoiceA$groupIndex <- groupIndex
-
-
-#for Condition A prestige-copying only, if any occurs:
-model2.1 <- map2stan(
-  alist(
-    copied_prestigious ~ dbinom(1, p),
-    logit(p) <- a + a_p[pptIndex]*sigma_p + a_g[groupIndex]*sigma_g,
-    a ~ dnorm(0,4),
-    a_p[pptIndex] ~ dnorm(0,1),
-    a_g[groupIndex] ~ dnorm(0,1),
-    sigma_p ~ dcauchy(0,1),
-    sigma_g ~ dcauchy(0,1)
-  ),
-  data=prestigeChoiceA, constraints=list(sigma_p="lower=0", sigma_g="lower=0"), 
-  warmup=1000, iter=1000, chains=1, cores=1 )
-
-precis(model2.1)
 #####
 #####
-##### Prediction 3,4 and 5: Participants choose to view “most copied” info more in Condition B than the other two conditions, 
-##### because (i) in Condition B copiers can access success info, unlike Condition A where copiers only have access to irrelevant info,
-##### and (ii) in Condition B copying info is the only relevant cue available, unlike Condition C where direct success info is available and just as easily accessible
-#####
+##### Prediction 4,5 and 6: Participants choose to view our predicted informatino when given the choice
+##### (Condition A = domain-specific, Condition B = domain-general, Condition C = domain-specific)
 #####
 #####
 
@@ -173,26 +133,6 @@ for (index in 1:Ngroups){
 }
 infoChosen$groupIndex <- groupIndex
 
-### version with CondB as baseline:
-
-model3.0 <- map2stan(
-  alist(
-    chosePrestige ~ dbinom(1, p),
-    logit(p) <- a + a_p[pptIndex]*sigma_p + a_g[groupIndex]*sigma_g + b_a*CondA + b_c*CondC,
-    a ~ dnorm(0,4),
-    a_p[pptIndex] ~ dnorm(0,1),
-    a_g[groupIndex] ~ dnorm(0,1),
-    b_a ~ dnorm(0,1),
-    b_c ~ dnorm(0,1),
-    sigma_p ~ dcauchy(0,1),
-    sigma_g ~ dcauchy(0,1)
-  ),
-  data=infoChosen, constraints=list(sigma_p="lower=0", sigma_g="lower=0"), 
-  warmup=1000, iter=1000, chains=1, cores=1 )
-
-precis(model3.0)
-plot(precis(model3.0), pars=c("a","b_a","b_c"), labels=c("Condition C","Condition A","Condition B"))
-
 ### the ulam version using Statistical Rethinking 2nd Edition
 ### make condition an index rather than using dummy variables (pp 328 Statistical Rethinking 2nd Edition )
 
@@ -204,20 +144,20 @@ for (index in 1:Nconds){
 }
 infoChosen$condsIndex <- condsIndex
 
-infoChosen$chosePrestige <-as.integer(infoChosen$chosePrestige)
+infoChosen$chosePredicted <-as.integer(infoChosen$chosePredicted)
 infoChosen$condsIndex <- as.integer(infoChosen$condsIndex)
 infoChosen$pptIndex <- as.integer(infoChosen$pptIndex)
 infoChosen$groupIndex <- as.integer(infoChosen$groupIndex)
 
 infoChosen_list <- list(
-  chosePrestige = infoChosen$chosePrestige,
+  chosePredicted = infoChosen$chosePredicted,
   pptIndex = infoChosen$pptIndex,
   groupIndex = infoChosen$groupIndex,
   condsIndex = infoChosen$condsIndex )
 
 model3 <- ulam(
   alist(
-    chosePrestige ~ dbinom( 1 , p ) ,
+    chosePredicted ~ dbinom( 1 , p ) ,
     logit(p) <- a[pptIndex] + g[groupIndex] + b[condsIndex] ,
     b[condsIndex] ~ dnorm( 0 , 0.5 ),
     a[pptIndex] ~ dnorm( a_bar , sigma_a ),
@@ -240,9 +180,10 @@ plot( precis( as.data.frame(p_conds) ) , xlim=c(0,1) )
 plot( precis( model3 , depth=2 , pars="b" ))
 
 #now implementing condition as varying intercepts too, pp. 423 in Statistical Rethinking 2nd Edition:
+# should we now have varying intercepts for topic too? probably
 model3.1 <- ulam(
   alist(
-    chosePrestige ~ dbinom( 1 , p ) ,
+    chosePredicted ~ dbinom( 1 , p ) ,
     logit(p) <- a[pptIndex] + g[groupIndex] + b[condsIndex] ,
     b[condsIndex] ~ dnorm( 0 , sigma_b ),
     a[pptIndex] ~ dnorm( a_bar , sigma_a ),
@@ -264,7 +205,7 @@ title("Participants Chose Prestige")
 
 #####
 #####
-##### Prediction 6 (model4): Copying rate is higher in Conditions B & C compared to Condition A because copying is only based on success in Conditions B & C
+##### Prediction 7 (model4): Copying rate is higher in Conditions A & C compared to Condition B because copying is more tightly related to success in Conditions A & C (if correlations hold)
 #####
 #####
 
@@ -361,85 +302,9 @@ diff_ac <- post$b[,3] - post$b[,2]
 diff_bc <- post$b[,1] - post$b[,3]
 precis(list(diff_ab=diff_ab, diff_ac=diff_ac, diff_bc=diff_bc))
 
-
-### without a_bar
-model4.3 <- ulam(
-  alist(
-    copied ~ dbinom( 1 , p ) ,
-    logit(p) <- a[pptIndex]*sigma_a + g[groupIndex]*sigma_g + b[condsIndex] ,
-    b[condsIndex] ~ dnorm( 0 , 1 ),
-    a[pptIndex] ~ dnorm( 0 , 1 ),
-    g[groupIndex] ~ dnorm( 0 , 1 ),
-    sigma_a ~ dexp(1),
-    sigma_g ~ dexp(1)
-  ) , data=asocialOnly_list_2 , constraints=list(sigma_a="lower=0", sigma_g="lower=0"), control=list( adapt_delta=0.99, max_treedepth=13), 
-  warmup=1000, iter=5000, chains=3 , cores=3 , log_lik=TRUE )
-print(Sys.time())
-
-precis(model4.3, depth = 2)
-precis(model4.3, pars = c('b[1]', 'b[2]', 'b[3]'), depth=2)
-
-
-post4.3 <- extract.samples(model4.3)
-diff_ab_4.3 <- post4.3$b[,1] - post4.3$b[,2]
-diff_ac_4.3 <- post4.3$b[,3] - post4.3$b[,2]
-diff_bc_4.3 <- post4.3$b[,1] - post4.3$b[,3]
-precis(list(diff_ab_4.3=diff_ab_4.3, diff_ac_4.3=diff_ac_4.3, diff_bc_4.3=diff_bc_4.3))
-
-
-#change dem priors
-model4.4 <- ulam(
-  alist(
-    copied ~ dbinom( 1 , p ) ,
-    logit(p) <- a_bar + a[pptIndex]*sigma_a + g[groupIndex]*sigma_g + b[condsIndex],
-    b[condsIndex] ~ dnorm( 0 , 1 ),
-    a[pptIndex] ~ dnorm( 0 , 1 ),
-    g[groupIndex] ~ dnorm( 0 , 1 ),
-    a_bar ~ dnorm ( 0, 1 ),
-    sigma_a ~ dexp(1),
-    sigma_g ~ dexp(1)
-  ) , data=asocialOnly_list_2 , constraints=list(sigma_a="lower=0", sigma_g="lower=0"), control=list( adapt_delta=0.99, max_treedepth=13), 
-  warmup=1000, iter=5000, chains=3 , cores=3 , log_lik=TRUE )
-print(Sys.time())
-
-precis(model4.4, depth = 2)
-precis(model4.4, pars = c('a_bar','b[1]', 'b[2]', 'b[3]'), depth=2)
-
-post4.4 <- extract.samples(model4.4)
-diff_ab_4.4 <- post4.4$b[,1] - post4.4$b[,2]
-diff_ac_4.4 <- post4.4$b[,3] - post4.4$b[,2]
-diff_bc_4.4 <- post4.4$b[,1] - post4.4$b[,3]
-precis(list(diff_ab_4.4=diff_ab_4.4, diff_ac_4.4=diff_ac_4.4, diff_bc_4.4=diff_bc_4.4))
-
-#another prior shift?
-model4.5 <- ulam(
-  alist(
-    copied ~ dbinom( 1 , p ) ,
-    logit(p) <- a_bar + a[pptIndex]*sigma_a + g[groupIndex]*sigma_g + b[condsIndex],
-    b[condsIndex] ~ dnorm( 0 , 0.5 ),
-    a[pptIndex] ~ dnorm( 0 , 0.5 ),
-    g[groupIndex] ~ dnorm( 0 , 0.5 ),
-    a_bar ~ dnorm ( 0, 1.5 ),
-    sigma_a ~ dexp(1),
-    sigma_g ~ dexp(1)
-  ) , data=asocialOnly_list_2 , constraints=list(sigma_a="lower=0", sigma_g="lower=0"), control=list( adapt_delta=0.99, max_treedepth=13), 
-  warmup=1000, iter=5000, chains=3 , cores=3 , log_lik=TRUE )
-print(Sys.time())
-
-precis(model4.5, depth = 2)
-precis(model4.5, pars = c('a_bar','b[1]', 'b[2]', 'b[3]'), depth=2)
-
-post4.5 <- extract.samples(model4.5)
-diff_ab_4.5 <- post4.5$b[,1] - post4.5$b[,2]
-diff_ac_4.5 <- post4.5$b[,3] - post4.5$b[,2]
-diff_bc_4.5 <- post4.5$b[,1] - post4.5$b[,3]
-precis(list(diff_ab_4.5=diff_ab_4.5, diff_ac_4.5=diff_ac_4.5, diff_bc_4.5=diff_bc_4.5))
-
-
-
 #####
 #####
-##### Prediction 7 (model5): Participants perform best on the quiz in Condition B & C compared to Condition A because copying is only based on success in Conditions B & C
+##### Prediction 8 (model5): Participants perform best on the quiz in Condition A & C compared to Condition B because copying is more tightly related to success in Conditions A & C
 #####
 
 ## Data frame consists of accumulated scores (including copied score) on final question
@@ -620,52 +485,4 @@ model5.2.1 <- map2stan(
   ), data = finalScoreA_list, chains=3)
 
 precis(model5.2.1)
-
-# EXPLORATORY: 
-# model 5.3 , c_copies <- t_score
-
-
-finalScoreBC <- as.data.frame(finalScoreBC)
-
-
-Ngroups = length(unique(finalScoreBC$u_network))
-Oldgroup <- finalScoreBC$u_network
-groupIndex <- array(0,length(finalScoreBC$u_network))
-for (index in 1:Ngroups){
-  groupIndex[Oldgroup == unique(Oldgroup)[index]] = index
-}
-finalScoreBC$groupIndex <- groupIndex
-finalScoreBC$groupIndex <- as.integer(finalScoreBC$groupIndex)
-
-Nconds = length(unique(finalScoreBC$condition))
-Oldconds <- finalScoreBC$condition
-condsIndex <- array(0,length(finalScoreBC$condition))
-for (index in 1:Nconds){
-  condsIndex[Oldconds == unique(Oldconds)[index]] = index
-}
-finalScoreBC$condsIndex <- condsIndex
-finalScoreBC$condsIndex <- as.integer(finalScoreBC$condsIndex)
-
-finalScoreBC$t_score <- as.integer(finalScoreBC$t_score)
-finalScoreBC$c_copies <- as.integer(finalScoreBC$c_copies)
-
-finalScoreBC_list <- list(
-  t_score = finalScoreBC$t_score,
-  groupIndex = finalScoreBC$groupIndex,
-  condsIndex = finalScoreBC$condsIndex,
-  c_copies = finalScoreBC$c_copies
-)
-
-
-model5.3 <- map2stan(
-  alist(
-    c_copies ~ dnorm(mu, sigma),
-    mu <- a + b*t_score + g[groupIndex],
-    a ~ dnorm(6,10),
-    b ~ dnorm(0,0.5),
-    g[groupIndex] ~ dnorm(0,0.5),
-    sigma ~ dexp(1)
-  ), data = finalScoreBC_list, chains=3)
-
-precis(model5.3)
 
