@@ -151,7 +151,7 @@ copied_highest <- function(x) {
     if (full_data$is_model_id[i] == TRUE) {
     models <- potential_models[potential_models$number == full_data$number[i] & potential_models$u_network == full_data$u_network[i],]
       if (nrow(models) > 1) {
-        if (length(unique(models$c_a_score_r1)) != 1) {
+        if (length(unique(model[,paste("$c_a_"x,sep="")] != 1) {
         model <- models[as.character(models$Origin) == full_data$Contents[i],]
           if (full_data$topic[i]==x) {
           full_data$copied_successful[i] <- (model[,paste("$c_a_",x,sep="")] == max(models[,paste("$c_a_",x,sep="")]))*1
