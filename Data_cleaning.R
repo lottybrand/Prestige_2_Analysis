@@ -44,56 +44,56 @@ for (i in 1:length(u_origins)) {
 }
 
 
-#figure out cumulative asocial GEOGRAPHY score in Round 1 
+#figure out Cumulative Asocial GEOGRAPHY score in Round 1 
 #(equivalent to asoc_score_geog in property1 of node table) 
 # now need to do this per topic (can we not get this from the node table?)
-full_data$c_a_Geography_score_r1 <- rep(-666, nrow(full_data))
+full_data$c_a_Geography <- rep(-666, nrow(full_data))
 u_origins <- unique(full_data$u_origin)
 for (i in 1:length(u_origins)) {
   u_origin <- u_origins[i]
   relevant_rows <- c(1:nrow(full_data))[full_data$u_origin == u_origin]
   subset <- full_data[relevant_rows,]
-  c_a_Geography_score_r1 <- cumsum(subset$score * (1-subset$copying) * (subset$round==1) * (subset$topic=="Geography"))
-  full_data$c_a_Geography_score_r1[relevant_rows] <- c_a_Geography_score_r1
+  c_a_Geography <- cumsum(subset$score * (1-subset$copying) * (subset$round==1) * (subset$topic=="Geography"))
+  full_data$c_a_Geography[relevant_rows] <- c_a_Geography
 }
 
-#figure out cumulative asocial LANGUAGE score in Round 1 
+#figure out Cumulative Asocial LANGUAGE score in Round 1 
 #(equivalent to asoc_score_lang in property1 of node table) 
 # now need to do this per topic (can we not get this from the node table?)
-full_data$c_a_Language_score_r1 <- rep(-666, nrow(full_data))
+full_data$c_a_Language <- rep(-666, nrow(full_data))
 u_origins <- unique(full_data$u_origin)
 for (i in 1:length(u_origins)) {
   u_origin <- u_origins[i]
   relevant_rows <- c(1:nrow(full_data))[full_data$u_origin == u_origin]
   subset <- full_data[relevant_rows,]
-  c_a_Language_score_r1 <- cumsum(subset$score * (1-subset$copying) * (subset$round==1) * (subset$topic=="Language"))
-  full_data$c_a_Language_score_r1[relevant_rows] <- c_a_Language_score_r1
+  c_a_Language <- cumsum(subset$score * (1-subset$copying) * (subset$round==1) * (subset$topic=="Language"))
+  full_data$c_a_Language[relevant_rows] <- c_a_Language
 }
 
-#figure out cumulative asocial WEIGHT score in Round 1 
+#figure out Cumulative Asocial WEIGHT score in Round 1 
 #(equivalent to asoc_score_weight in property1 of node table) 
 # now need to do this per topic (can we not get this from the node table?)
-full_data$c_a_Weight_score_r1 <- rep(-666, nrow(full_data))
+full_data$c_a_Weight <- rep(-666, nrow(full_data))
 u_origins <- unique(full_data$u_origin)
 for (i in 1:length(u_origins)) {
   u_origin <- u_origins[i]
   relevant_rows <- c(1:nrow(full_data))[full_data$u_origin == u_origin]
   subset <- full_data[relevant_rows,]
-  c_a_Weight_score_r1 <- cumsum(subset$score * (1-subset$copying) * (subset$round==1) * (subset$topic=="Weight"))
-  full_data$c_a_Weight_score_r1[relevant_rows] <- c_a_Weight_score_r1
+  c_a_Weight <- cumsum(subset$score * (1-subset$copying) * (subset$round==1) * (subset$topic=="Weight"))
+  full_data$c_a_Weight[relevant_rows] <- c_a_Weight
 }
 
-#figure out cumulative asocial ART score in Round 1 
+#figure out Cumulative Asocial ART score in Round 1 
 #(equivalent to asoc_score_art in property1 of node table) 
 # now need to do this per topic (can we not get this from the node table?)
-full_data$c_a_Art_score_r1 <- rep(-666, nrow(full_data))
+full_data$c_a_Art <- rep(-666, nrow(full_data))
 u_origins <- unique(full_data$u_origin)
 for (i in 1:length(u_origins)) {
   u_origin <- u_origins[i]
   relevant_rows <- c(1:nrow(full_data))[full_data$u_origin == u_origin]
   subset <- full_data[relevant_rows,]
-  c_a_Art_score_r1 <- cumsum(subset$score * (1-subset$copying) * (subset$round==1) * (subset$topic=="Art"))
-  full_data$c_a_Art_score_r1[relevant_rows] <- c_a_Art_score_r1
+  c_a_Art <- cumsum(subset$score * (1-subset$copying) * (subset$round==1) * (subset$topic=="Art"))
+  full_data$c_a_Art[relevant_rows] <- c_a_Art
 }
 
 #figure out total score including copies 
@@ -154,7 +154,7 @@ copied_highest <- function(x) {
         if (length(unique(models$c_a_score_r1)) != 1) {
         model <- models[as.character(models$Origin) == full_data$Contents[i],]
           if (full_data$topic[i]==x) {
-          full_data$copied_successful[i] <- (model(paste("$c_a_",x,"_score_r1",sep=""))) == max(models(paste("$c_a_",x,"_score_r1",sep="")))*1
+          full_data$copied_successful[i] <- model[,paste("c_a_",x,sep="")] == max(models[,paste("c_a_",x,sep="")])*1
           }
         }
       }
