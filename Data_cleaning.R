@@ -154,7 +154,7 @@ copied_highest <- function(x) {
         if (length(unique(models$c_a_score_r1)) != 1) {
         model <- models[as.character(models$Origin) == full_data$Contents[i],]
           if (full_data$topic[i]==x) {
-          full_data$copied_successful[i] <- model[,paste("c_a_",x,sep="")] == max(models[,paste("c_a_",x,sep="")])*1
+          full_data$copied_successful[i] <- (model[,paste("$c_a_",x,sep="")] == max(models[,paste("$c_a_",x,sep="")]))*1
           }
         }
       }
