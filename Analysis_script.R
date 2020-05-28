@@ -170,11 +170,23 @@ model3 <- ulam(
   warmup=1000, iter=4000, chains=3 , cores=3 , log_lik=TRUE )
 
 precis(model3)
+precis(model3, pars = c('a_bar','b[1]', 'b[2]', 'b[3]'), depth=2)
 
 #plotting predictions based on conds: (pp 332 in 2nd edition )
 post <- extract.samples(model3)
 p_conds <- inv_logit( post$b )
 plot( precis( as.data.frame(p_conds) ) , xlim=c(0,1) )
+
+#plot raw data?
+rawPlot <- ggplot(infoChosen, aes(condition, chosePredicted)) +
+  stat_summary(fun.y=mean, position= position_dodge(0.3), geom = "point", size = 2.8) +
+  #stat_summary(fun.data = mean_cl_normal, position = position_dodge(0.3), geom = "errorbar", width = 0.08) +
+  geom_hline(aes(yintercept=0.5), linetype="dashed", show.legend=FALSE) +
+  theme_bw() + theme(text = element_text(size=12), axis.title.x=element_blank(), axis.title.y=element_text(margin=margin(0,12,0,0))) + 
+  ylab("Proportion Chose Predicted") +
+  scale_x_discrete(limits = c("CondC", "CondA", "CondB")) +
+  scale_y_continuous(limits=c(0,1))
+rawPlot
 
 #plotting condition effects, (pp 333 in 2nd edition)
 plot( precis( model3 , depth=2 , pars="b" ))
@@ -200,8 +212,8 @@ precis(model3.1, pars = c('b[1]', 'b[2]', 'b[3]'), depth=2)
 traceplot(model3.1)
 
 #plotting condition effects, (pp 333 in 2nd edition)
-mainFig <- plot(precis(model3.1, depth = 2), pars=c("b[2]","b[1]","b[3]"), labels=c("Control \nCondition","Prestige \nCondition","Success \nCondition"), xlab="Model estimate")
-title("Participants Chose Prestige")
+mainFig <- plot(precis(model3, depth = 2), pars=c('a_bar',"b[2]","b[1]","b[3]"), labels=c("intercept","C ","A","B"), xlab="Model estimate")
+title("Participants Chose Predicted")
 
 #####
 #####
