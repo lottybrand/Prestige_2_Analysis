@@ -143,33 +143,70 @@ for (topic in topics) {
   topic_copies(topic)
 }
 
-#figure out if they copied the highest scorer: 
-copied_highest <- function(x) {
-  full_data$copied_successful <- rep(NA, nrow(full_data))
-  potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else",]
-  for (i in 1:nrow(full_data)) {
-    if (full_data$is_model_id[i] == TRUE) {
-      models <- potential_models[potential_models$number == full_data$number[i] & potential_models$u_network == full_data$u_network[i],]
-      if (nrow(models) > 1) {
-        if (length(unique(model[,paste("$c_a_",x,sep="")])) != 1) {
-          model <- models[as.character(models$Origin) == full_data$Contents[i],]
-          full_data$copied_successful[i] <- (model[,paste("$c_a_",x,sep="")] == max(models[,paste("$c_a_",x,sep="")]))*1
-        }
+#had to split the below into several chunks per topic instead of one function like the above:
+#figure out if they copied the highest scorer for Geography: 
+full_data$copied_successful_geog <- rep(NA, nrow(full_data))
+potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else" & full_data$topic =="Geography",]
+for (i in 1:nrow(full_data)) {
+  if (full_data$is_model_id[i] == TRUE) {
+    models <- potential_models[potential_models$number == full_data$number[i] & potential_models$u_network == full_data$u_network[i],]
+    if (nrow(models) > 1) {
+      if (length(unique(models$c_a_Geography)) != 1) {
+        model <- models[as.character(models$Origin) == full_data$Contents[i],]
+        full_data$copied_successful_geog[i] <- (model$c_a_Geography == max(models$c_a_Geography))*1
       }
     }
   }
 }
 
-for (topic in topics) {
-  copied_highest(topic)
+#figure out if they copied the highest scorer for Language:
+full_data$copied_successful_lang <- rep(NA, nrow(full_data))
+potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else" & full_data$topic =="Language",]
+for (i in 1:nrow(full_data)) {
+  if (full_data$is_model_id[i] == TRUE) {
+    models <- potential_models[potential_models$number == full_data$number[i] & potential_models$u_network == full_data$u_network[i],]
+    if (nrow(models) > 1) {
+      if (length(unique(models$c_a_Language)) != 1) {
+        model <- models[as.character(models$Origin) == full_data$Contents[i],]
+        full_data$copied_successful_lang[i] <- (model$c_a_Language == max(models$c_a_Language))*1
+      }
+    }
+  }
 }
 
+#figure out if they copied the highest scorer for Weight:
+full_data$copied_successful_weight <- rep(NA, nrow(full_data))
+potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else" & full_data$topic =="Weight",]
+for (i in 1:nrow(full_data)) {
+  if (full_data$is_model_id[i] == TRUE) {
+    models <- potential_models[potential_models$number == full_data$number[i] & potential_models$u_network == full_data$u_network[i],]
+    if (nrow(models) > 1) {
+      if (length(unique(models$c_a_Weight)) != 1) {
+        model <- models[as.character(models$Origin) == full_data$Contents[i],]
+        full_data$copied_successful_weight[i] <- (model$c_a_Weight == max(models$c_a_Weight))*1
+      }
+    }
+  }
+}
 
+#figure out if they copied the highest scorer for Art:
+full_data$copied_successful_art <- rep(NA, nrow(full_data))
+potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else" & full_data$topic =="Art",]
+for (i in 1:nrow(full_data)) {
+  if (full_data$is_model_id[i] == TRUE) {
+    models <- potential_models[potential_models$number == full_data$number[i] & potential_models$u_network == full_data$u_network[i],]
+    if (nrow(models) > 1) {
+      if (length(unique(models$c_a_Art)) != 1) {
+        model <- models[as.character(models$Origin) == full_data$Contents[i],]
+        full_data$copied_successful_art[i] <- (model$c_a_Art == max(models$c_a_Art))*1
+      }
+    }
+  }
+}
 
-test_set <- full_data[,c("number","topic","Contents","Origin","round","Network","u_network","u_origin","c_a_geog_score_r1","c_a_art_score_r1","c_a_lang_score_r1","c_a_wght_score_r1","copied_successful","is_model_id")]
+test_set <- full_data[,c("number","topic","Contents","Origin","round","Network","u_network","u_origin","c_a_Language","copied_successful_lang")]
 test_set <- test_set[test_set$round==1,]
-#test_set <- test_set[test_set$is_model_id==TRUE,]
-test_set$is_model_id <- NULL
+
 test_set_lang <- test_set[test_set$topic=="Language",]
 
 #figure out if they copied the most copied:
