@@ -204,10 +204,21 @@ for (i in 1:nrow(full_data)) {
   }
 }
 
-test_set <- full_data[,c("number","topic","Contents","Origin","round","Network","u_network","u_origin","c_a_Language","copied_successful_lang")]
-test_set <- test_set[test_set$round==1,]
+#merge these columns (by overwriting each column with subsequent non NA entries)
+#using simple solution from this page: https://stackoverflow.com/questions/14563531/combine-column-to-remove-nas
 
-test_set_lang <- test_set[test_set$topic=="Language",]
+full_data$copied_successful <- full_data$copied_successful_geog  
+full_data$copied_successful[!is.na(full_data$copied_successful_lang)] <- full_data$copied_successful_lang[!is.na(full_data$copied_successful_lang)]  # merge with lang
+full_data$copied_successful[!is.na(full_data$copied_successful_weight)] <- full_data$copied_successful_weight[!is.na(full_data$copied_successful_weight)]  # merge with weight
+full_data$copied_successful[!is.na(full_data$copied_successful_art)] <- full_data$copied_successful_art[!is.na(full_data$copied_successful_art)]  # merge with art
+
+
+
+test_set <- full_data[,c("number","round","Contents","Origin","topic","copied_successful_geog","copied_successful_weight","copied_successful_art","copied_successful_lang","copied_successful","is_model_id")]
+test_set <- test_set[test_set$round==1,]
+test_set <- test_set[test_set$is_model_id==TRUE,]
+
+
 
 #figure out if they copied the most copied:
 full_data$copied_prestigious <- rep(NA, nrow(full_data))
