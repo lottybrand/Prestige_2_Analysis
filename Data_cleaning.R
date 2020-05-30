@@ -144,6 +144,7 @@ for (topic in topics) {
 }
 
 #had to split the below into several chunks per topic instead of one function like the above:
+#probably want to make this only calculate for round 1? 
 #figure out if they copied the highest scorer for Geography: 
 full_data$copied_successful_geog <- rep(NA, nrow(full_data))
 potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else" & full_data$topic =="Geography",]
@@ -212,28 +213,88 @@ full_data$copied_successful[!is.na(full_data$copied_successful_lang)] <- full_da
 full_data$copied_successful[!is.na(full_data$copied_successful_weight)] <- full_data$copied_successful_weight[!is.na(full_data$copied_successful_weight)]  # merge with weight
 full_data$copied_successful[!is.na(full_data$copied_successful_art)] <- full_data$copied_successful_art[!is.na(full_data$copied_successful_art)]  # merge with art
 
+# creating test data  sets to check the code worked as it should 
+#test_set <- full_data[,c("number","round","Contents","Origin","topic","copied_successful_geog","copied_successful_weight","copied_successful_art","copied_successful_lang","copied_successful","is_model_id")]
+#test_set <- test_set[test_set$round==1,]
+#test_set <- test_set[test_set$is_model_id==TRUE,]
 
 
-test_set <- full_data[,c("number","round","Contents","Origin","topic","copied_successful_geog","copied_successful_weight","copied_successful_art","copied_successful_lang","copied_successful","is_model_id")]
-test_set <- test_set[test_set$round==1,]
-test_set <- test_set[test_set$is_model_id==TRUE,]
-
-
-
-#figure out if they copied the most copied:
-full_data$copied_prestigious <- rep(NA, nrow(full_data))
-potential_models <- full_data[full_data$copying == FALSE]
+#figure out if they copied the most copied for Geography:
+#probably want to make this only calculate in round 2... 
+full_data$copied_prestigious_geog <- rep(NA, nrow(full_data))
+potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else" & full_data$topic =="Geography",]
 for (i in 1:nrow(full_data)) {
   if (full_data$is_model_id[i] == TRUE) {
-    models <- full_data[full_data$number == full_data$number[i] & full_data$u_network == full_data$u_network[i],]
+    models <- potential_models[potential_models$number == full_data$number[i] & potential_models$u_network == full_data$u_network[i],]
     if (nrow(models) > 1) {
-      if (length(unique(models$c_copies)) != 1) {
+      if (length(unique(models$c_copies_Geography)) != 1) {
         model <- models[as.character(models$Origin) == full_data$Contents[i],]
-        full_data$copied_prestigious[i] <- (model$c_copies == max(models$c_copies))*1
+        full_data$copied_prestigious_geog[i] <- (model$c_copies_Geography == max(models$c_copies_Geography))*1
       }
     }
   }
 }
+
+#did they copie most copied in language
+full_data$copied_prestigious_lang <- rep(NA, nrow(full_data))
+potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else" & full_data$topic =="Language",]
+for (i in 1:nrow(full_data)) {
+  if (full_data$is_model_id[i] == TRUE) {
+    models <- potential_models[potential_models$number == full_data$number[i] & potential_models$u_network == full_data$u_network[i],]
+    if (nrow(models) > 1) {
+      if (length(unique(models$c_copies_Language)) != 1) {
+        model <- models[as.character(models$Origin) == full_data$Contents[i],]
+        full_data$copied_prestigious_lang[i] <- (model$c_copies_Language == max(models$c_copies_Language))*1
+      }
+    }
+  }
+}
+
+#did they copie most copied in weight
+full_data$copied_prestigious_weight <- rep(NA, nrow(full_data))
+potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else" & full_data$topic =="Weight",]
+for (i in 1:nrow(full_data)) {
+  if (full_data$is_model_id[i] == TRUE) {
+    models <- potential_models[potential_models$number == full_data$number[i] & potential_models$u_network == full_data$u_network[i],]
+    if (nrow(models) > 1) {
+      if (length(unique(models$c_copies_Weight)) != 1) {
+        model <- models[as.character(models$Origin) == full_data$Contents[i],]
+        full_data$copied_prestigious_weight[i] <- (model$c_copies_Weight == max(models$c_copies_Weight))*1
+      }
+    }
+  }
+}
+
+#did they copie most copied in art
+full_data$copied_prestigious_art <- rep(NA, nrow(full_data))
+potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else" & full_data$topic =="Art",]
+for (i in 1:nrow(full_data)) {
+  if (full_data$is_model_id[i] == TRUE) {
+    models <- potential_models[potential_models$number == full_data$number[i] & potential_models$u_network == full_data$u_network[i],]
+    if (nrow(models) > 1) {
+      if (length(unique(models$c_copies_Art)) != 1) {
+        model <- models[as.character(models$Origin) == full_data$Contents[i],]
+        full_data$copied_prestigious_art[i] <- (model$c_copies_Art == max(models$c_copies_Art))*1
+      }
+    }
+  }
+}
+
+
+#merge these columns (by overwriting each column with subsequent non NA entries)
+#using simple solution from this page: https://stackoverflow.com/questions/14563531/combine-column-to-remove-nas
+
+full_data$copied_prestigious <- full_data$copied_prestigious_geog  
+full_data$copied_prestigious[!is.na(full_data$copied_prestigious_lang)] <- full_data$copied_prestigious_lang[!is.na(full_data$copied_prestigious_lang)]  # merge with lang
+full_data$copied_prestigious[!is.na(full_data$copied_prestigious_weight)] <- full_data$copied_prestigious_weight[!is.na(full_data$copied_prestigious_weight)]  # merge with weight
+full_data$copied_prestigious[!is.na(full_data$copied_prestigious_art)] <- full_data$copied_prestigious_art[!is.na(full_data$copied_prestigious_art)]  # merge with art
+
+
+# creating test data  sets to check the code worked as it should 
+test_set <- full_data[,c("copied_prestigious","copied_prestigious_art","round","copied_prestigious_weight","copied_prestigious_lang","copied_prestigious_geog","is_model_id")]
+test_set <- test_set[test_set$round==2,]
+test_set$round<-NULL
+#test_set <- test_set[test_set$is_model_id==TRUE,]
 
 
 #figure out total copied (how many times they copied others across both rounds)
