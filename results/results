@@ -1,5 +1,22 @@
 
 
+
+
+Prediction 2: 
+
+
+
+Prediction 3: 
+                Practice Geography Weight Language  Art
+  all              0       144     74      140  113
+  Art              0        16      6       20 1086
+  Geography        0      1016     12       12   12
+  Language         0         7      9     1178   15
+  NA               0      8120   7602     8097 7881
+  Weight           0        10    614       13   12
+
+
+Predictions 4,5,6:
 precis (model3)
 
 mean   sd 5.5% 94.5% n_eff Rhat
@@ -15,3 +32,4 @@ a_bar  2.76 0.36  2.20  3.35   740    1
 b[1]   0.11 0.37 -0.48  0.71  1192    1
 b[2]   0.25 0.38 -0.36  0.86  1446    1
 b[3]  -0.10 0.37 -0.69  0.50  1527    1
+

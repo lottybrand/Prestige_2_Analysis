@@ -221,10 +221,13 @@ full_data$copied_successful[!is.na(full_data$copied_successful_art)] <- full_dat
 
 #figure out if they copied the most copied for Geography:
 #probably want to make this only calculate in round 2... 
+
+Geography<-c("Geography")
+
 full_data$copied_prestigious_geog <- rep(NA, nrow(full_data))
 potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else" & full_data$topic =="Geography",]
 for (i in 1:nrow(full_data)) {
-  if (full_data$is_model_id[i] == TRUE) {
+  if (full_data$topic_seen[i] %in%Geography) {
     models <- potential_models[potential_models$number == full_data$number[i] & potential_models$u_network == full_data$u_network[i],]
     if (nrow(models) > 1) {
       if (length(unique(models$c_copies_Geography)) != 1) {
@@ -291,7 +294,8 @@ full_data$copied_prestigious[!is.na(full_data$copied_prestigious_art)] <- full_d
 
 
 # creating test data  sets to check the code worked as it should 
-test_set <- full_data[,c("copied_prestigious","copied_prestigious_art","round","copied_prestigious_weight","copied_prestigious_lang","copied_prestigious_geog","is_model_id")]
+#test_set <- full_data[,c("copied_prestigious","copied_prestigious_art","round","copied_prestigious_weight","copied_prestigious_lang","copied_prestigious_geog","is_model_id")]
+test_set <- full_data[,c("number","round","u_network","Contents","Origin","topic","topic_seen","copied_prestigious_geog","is_model_id")]
 test_set <- test_set[test_set$round==2,]
 test_set$round<-NULL
 #test_set <- test_set[test_set$is_model_id==TRUE,]
@@ -333,10 +337,10 @@ copyOnly <-full_data[full_data$copying=="TRUE",]
 
 # need to subset only copying instances and only when score info is visible 
 
-# first is it a copying decision rather than a copied answer:
-model_ids <- full_data[full_data$is_model_id==TRUE,]
-# then is it not condition a, and is it in round 1 (of B & C) OR  was info chosen score in R2... 
-#scoreChoice <- model_ids[((!model_ids$condition=="a")&(model_ids$round==1))|(model_ids$info_chosen=="Total Score in Round 1"),]                                     
+# first is it a copying decision rather than a copied answer
+# then is it round 1, when copying was always based on topic score
+scoreChoice <- full_data[full_data$is_model_id==TRUE & full_data$round==1,]
+                                     
 
 
 #####
