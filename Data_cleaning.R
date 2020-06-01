@@ -3,6 +3,8 @@
 # SKIP TO LINE 113 <<- ONLY NEED TO RUN THIS
 # source('data_inputting.R')
 
+#setwd("~/Desktop/Postdoc/Lottys_dallinger/Prestige_2_analysis")
+
 #####
 #assign first dataset to full_data:
 full_data <- loaded_files[[1]]
@@ -145,7 +147,8 @@ for (topic in topics) {
 
 #had to split the below into several chunks per topic instead of one function like the above:
 #probably want to make this only calculate for round 1? 
-#figure out if they copied the highest scorer for Geography: 
+#figure out if they copied the highest scorer for Geography:
+
 full_data$copied_successful_geog <- rep(NA, nrow(full_data))
 potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else" & full_data$topic =="Geography",]
 for (i in 1:nrow(full_data)) {
@@ -340,14 +343,19 @@ copyOnly <-full_data[full_data$copying=="TRUE",]
 # first is it a copying decision rather than a copied answer
 # then is it round 1, when copying was always based on topic score
 scoreChoice <- full_data[full_data$is_model_id==TRUE & full_data$round==1,]
-                                     
 
+#remove NAs from copied_successful because these are when there was no variation in score to choose from, e.g. first question from each topic
+scoreChoice <- scoreChoice[!is.na(scoreChoice$copied_successful),]
+                                     
+#test_set <- full_data[full_data$is_model_id==TRUE,]
+#test_NA <- full_data[is.na(full_data$copied_successful),]
+#test_NA <- test_NA[,c("number","Contents","Origin","u_network","c_a_Geography","c_a_Language","c_a_Weight","c_a_Art","copied_successful")]
 
 #####
 ##### Subset for seeing prestige info (Prediction 3)
 #####
 
-#prestigeChoice <- model_ids[model_ids$info_chosen =="Times chosen in Round 1",]
+#prestigeChoice <- full_data[full_data$is_model_id==TRUE & full_data$round==2,]
 
 
 #####
@@ -367,7 +375,7 @@ infoChosen$chosePredicted <- ifelse((infoChosen$info_chosen%in%domain_spec & inf
                                     
 
 ##### 
-##### Prediction 6 (model4): 
+##### Prediction 7 (model4): 
 #####
 
 # have copied or not be 0/1 for asocial choices (this includes any 'ask someone else's)
@@ -375,12 +383,13 @@ infoChosen$chosePredicted <- ifelse((infoChosen$info_chosen%in%domain_spec & inf
 asocialOnly$copied <- ifelse(asocialOnly$Contents=="Ask Someone Else",1,0)
 asocialOnly_2 <- asocialOnly[asocialOnly$round==2,]
 
+
 #change baseline to condition to A if not using ulam method:
 #asocialOnly$condB <- ifelse(asocialOnly$condition=="b",1,0)
 #asocialOnly$condC <- ifelse(asocialOnly$condition=="c",1,0)
 
 #####
-##### Prediction 7 (model 5):
+##### Prediction 8 (model 5):
 #####
 
 #taking just the accumulated score for the final question for each participant

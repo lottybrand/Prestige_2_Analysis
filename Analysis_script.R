@@ -17,8 +17,8 @@
 #####
 
 # data frame is whenever a copying event happened && score information was available 
-# =(Round 1 in Condition B & C, Round 2 in Condition C depending on Choice.)
-# dataframe is made in dallinger_data_cleaning.R file
+# =Round 1
+# dataframe is made in dallinger_data_cleaning.R file line 335
 
 scoreChoice<- as.data.frame(scoreChoice)
 
@@ -40,6 +40,8 @@ for (index in 1:Ngroups){
 }
 scoreChoice$groupIndex <- groupIndex
 
+scoreChoice <- scoreChoice[,c("pptIndex","copied_successful","groupIndex")]
+scoreChoice<- as.data.frame(scoreChoice)
 
 model1 <- map2stan(
   alist(
@@ -303,7 +305,7 @@ precis(model4.2, depth = 2)
 precis(model4.2, pars = c('a_bar','b[1]', 'b[2]', 'b[3]'), depth=2)
 traceplot(model4)
 
-post <- extract.samples(model4.2)
+post <- extract.samples(model4)
 diff_ab <- post$b[,1] - post$b[,2]
 diff_ac <- post$b[,3] - post$b[,2]
 diff_bc <- post$b[,1] - post$b[,3]
