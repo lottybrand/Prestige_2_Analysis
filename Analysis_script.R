@@ -57,20 +57,22 @@ model1 <- map2stan(
   warmup=1000, iter=4000, chains=3, cores=3)
 
 precis(model1)
+plot(precis(model1))
 
 #####
 #####
 #####
-##### Prediction 3: Participants copy the most-copied participant out of those available in Round 2 of Conditions B & C 
+##### Prediction 3: Participants copy the most-copied participant out of those available in Round 2 
+##### 
 #####
 #####
 #####
 
-## Dataframe is whenever someone chose to view prestige information when based on success (Conds B&C Only), made in dallinger_data_cleaning.R 
-## A separate, identical model will be run for any prestige-based copying that occurs in Condition A, as prestige cues in Condition A are not based on success information (see pre-reg file), so we have no a priori predictions for this behaviour
+## Dataframe is whenever someone chose to view prestige information (all of Round2) made in dallinger_data_cleaning.R 
+
 
 prestigeChoice<- as.data.frame(prestigeChoice)
-prestigeChoice <- prestigeChoice[!prestigeChoice$condition=="a",]
+
 
 #make ppt index contiguous:
 Nppts = length(unique(prestigeChoice$u_origin))
@@ -108,7 +110,7 @@ precis(model2)
 #####
 #####
 ##### Prediction 4,5 and 6: Participants choose to view our predicted informatino when given the choice
-##### (Condition A = domain-specific, Condition B = domain-general, Condition C = domain-specific)
+##### (Condition A = domain-specific, Condition B = domain-general, Condition C = domain-specific, Condition D = cross-domain)
 #####
 #####
 
@@ -172,7 +174,7 @@ model3 <- ulam(
   warmup=1000, iter=4000, chains=3 , cores=3 , log_lik=TRUE )
 
 precis(model3)
-precis(model3, pars = c('a_bar','b[1]', 'b[2]', 'b[3]'), depth=2)
+precis(model3, pars = c('a_bar','b[1]', 'b[2]', 'b[3]','b[4]'), depth=2)
 
 #plotting predictions based on conds: (pp 332 in 2nd edition )
 post <- extract.samples(model3)

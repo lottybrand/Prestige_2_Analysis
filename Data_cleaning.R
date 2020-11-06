@@ -327,7 +327,7 @@ full_data$copied_prestigious[!is.na(full_data$copied_prestigious_all)] <- full_d
 
 # creating test data  sets to check the code worked as it should 
 #test_set <- full_data[,c("copied_prestigious","copied_prestigious_art","round","copied_prestigious_weight","copied_prestigious_lang","copied_prestigious_geog","is_model_id")]
-test_set <- full_data[,c("number","round","u_network","Contents","Origin","topic","topic_seen","info_chosen","c_copies","c_copies_Geography","copied_prestigious_geog","is_model_id")]
+test_set <- full_data[,c("number","round","u_network","Contents","Origin","topic","topic_seen","info_chosen","c_copies","c_copies_Geography","copied_prestigious_geog")]
 test_set <- test_set[test_set$round==2,]
 test_set$round<-NULL
 #test_set <- test_set[test_set$is_model_id==TRUE,]
@@ -384,23 +384,28 @@ scoreChoice <- scoreChoice[!is.na(scoreChoice$copied_successful),]
 ##### Subset for seeing prestige info (Prediction 3)
 #####
 
-#prestigeChoice <- full_data[full_data$is_model_id==TRUE & full_data$round==2,]
+prestigeChoice <- full_data[full_data$is_model_id==TRUE & full_data$round==2,]
 
+#remove NAs from copied_prestigiou because these are when there was no variation in prestige to choose from
+prestigeChoice <- prestigeChoice[!is.na(prestigeChoice$copied_prestigious),]
 
 #####
 ##### Subset of info chosen for Predictions 4,5,6 (model 3 ):
 #####
 
 #is info choice:
-infoChosen <- model_ids[model_ids$round==2,]
+infoChosen <- full_data[full_data$is_model_id==TRUE & full_data$round==2,]
+
 
 #predicted infos:
 domain_spec <- c("Times Chosen on This Topic")
 domain_gen <- c("Times Chosen Altogether")
+cross_domain <- c("Times Chosen on a Different Topic")
 
 infoChosen$chosePredicted <- ifelse((infoChosen$info_chosen%in%domain_spec & infoChosen$condition=='a'),1,
                                     ifelse((infoChosen$info_chosen%in%domain_gen & infoChosen$condition=='b'),1,
-                                           ifelse((infoChosen$info_chosen%in%domain_spec & infoChosen$condition=='c'),1,0)))
+                                           ifelse((infoChosen$info_chosen%in%cross_domain & infoChosen$condition=='d'),1,
+                                              ifelse((infoChosen$info_chosen%in%domain_spec & infoChosen$condition=='c'),1,0))))
                                     
 
 ##### 
