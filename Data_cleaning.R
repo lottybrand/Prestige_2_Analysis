@@ -228,7 +228,7 @@ full_data$copied_successful[!is.na(full_data$copied_successful_art)] <- full_dat
 Geography<-c("Geography")
 
 full_data$copied_prestigious_geog <- rep(NA, nrow(full_data))
-potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else"]
+potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else",]
 for (i in 1:nrow(full_data)) {
   if (full_data$topic_seen[i] == Geography) {
     models <- potential_models[potential_models$number == full_data$number[i] & potential_models$u_network == full_data$u_network[i],]
@@ -241,11 +241,15 @@ for (i in 1:nrow(full_data)) {
   }
 }
 
-#did they copie most copied in language
+
+#did they copy most copied in language
+
+Language <- c("Language")
+
 full_data$copied_prestigious_lang <- rep(NA, nrow(full_data))
-potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else" & full_data$topic =="Language",]
+potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else",]
 for (i in 1:nrow(full_data)) {
-  if (full_data$is_model_id[i] == TRUE) {
+  if (full_data$topic_seen[i] == Language) {
     models <- potential_models[potential_models$number == full_data$number[i] & potential_models$u_network == full_data$u_network[i],]
     if (nrow(models) > 1) {
       if (length(unique(models$c_copies_Language)) != 1) {
@@ -257,10 +261,13 @@ for (i in 1:nrow(full_data)) {
 }
 
 #did they copie most copied in weight
+
+Weight <- c("Weight")
+
 full_data$copied_prestigious_weight <- rep(NA, nrow(full_data))
-potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else" & full_data$topic =="Weight",]
+potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else",]
 for (i in 1:nrow(full_data)) {
-  if (full_data$is_model_id[i] == TRUE) {
+  if (full_data$topic_seen[i] == Weight) {
     models <- potential_models[potential_models$number == full_data$number[i] & potential_models$u_network == full_data$u_network[i],]
     if (nrow(models) > 1) {
       if (length(unique(models$c_copies_Weight)) != 1) {
@@ -272,10 +279,13 @@ for (i in 1:nrow(full_data)) {
 }
 
 #did they copie most copied in art
+
+Art <- c("Art")
+
 full_data$copied_prestigious_art <- rep(NA, nrow(full_data))
-potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else" & full_data$topic =="Art",]
+potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else",]
 for (i in 1:nrow(full_data)) {
-  if (full_data$is_model_id[i] == TRUE) {
+  if (full_data$topic_seen[i] == Art) {
     models <- potential_models[potential_models$number == full_data$number[i] & potential_models$u_network == full_data$u_network[i],]
     if (nrow(models) > 1) {
       if (length(unique(models$c_copies_Art)) != 1) {
@@ -287,6 +297,24 @@ for (i in 1:nrow(full_data)) {
 }
 
 ### NEED TO ADD copied_prestigious_ALL here for 'times copied altogether' and total copies? 
+
+all <- c("all")
+
+full_data$copied_prestigious_all <- rep(NA, nrow(full_data))
+potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else",]
+for (i in 1:nrow(full_data)) {
+  if (full_data$topic_seen[i] == all) {
+    models <- potential_models[potential_models$number == full_data$number[i] & potential_models$u_network == full_data$u_network[i],]
+    if (nrow(models) > 1) {
+      if (length(unique(models$c_copies)) != 1) {
+        model <- models[as.character(models$Origin) == full_data$Contents[i],]
+        full_data$copied_prestigious_all[i] <- (model$c_copies == max(models$c_copies))*1
+      }
+    }
+  }
+}
+
+
 #merge these columns (by overwriting each column with subsequent non NA entries)
 #using simple solution from this page: https://stackoverflow.com/questions/14563531/combine-column-to-remove-nas
 
@@ -294,6 +322,7 @@ full_data$copied_prestigious <- full_data$copied_prestigious_geog
 full_data$copied_prestigious[!is.na(full_data$copied_prestigious_lang)] <- full_data$copied_prestigious_lang[!is.na(full_data$copied_prestigious_lang)]  # merge with lang
 full_data$copied_prestigious[!is.na(full_data$copied_prestigious_weight)] <- full_data$copied_prestigious_weight[!is.na(full_data$copied_prestigious_weight)]  # merge with weight
 full_data$copied_prestigious[!is.na(full_data$copied_prestigious_art)] <- full_data$copied_prestigious_art[!is.na(full_data$copied_prestigious_art)]  # merge with art
+full_data$copied_prestigious[!is.na(full_data$copied_prestigious_all)] <- full_data$copied_prestigious_all[!is.na(full_data$copied_prestigious_all)]  # merge with art
 
 
 # creating test data  sets to check the code worked as it should 
