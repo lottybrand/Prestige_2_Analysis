@@ -228,9 +228,9 @@ full_data$copied_successful[!is.na(full_data$copied_successful_art)] <- full_dat
 Geography<-c("Geography")
 
 full_data$copied_prestigious_geog <- rep(NA, nrow(full_data))
-potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else" & full_data$topic =="Geography",]
+potential_models <- full_data[full_data$copying == FALSE & full_data$Contents != "Ask Someone Else"]
 for (i in 1:nrow(full_data)) {
-  if (full_data$topic_seen[i] %in%Geography) {
+  if (full_data$topic_seen[i] == Geography) {
     models <- potential_models[potential_models$number == full_data$number[i] & potential_models$u_network == full_data$u_network[i],]
     if (nrow(models) > 1) {
       if (length(unique(models$c_copies_Geography)) != 1) {
@@ -286,7 +286,7 @@ for (i in 1:nrow(full_data)) {
   }
 }
 
-
+### NEED TO ADD copied_prestigious_ALL here for 'times copied altogether' and total copies? 
 #merge these columns (by overwriting each column with subsequent non NA entries)
 #using simple solution from this page: https://stackoverflow.com/questions/14563531/combine-column-to-remove-nas
 
@@ -298,7 +298,7 @@ full_data$copied_prestigious[!is.na(full_data$copied_prestigious_art)] <- full_d
 
 # creating test data  sets to check the code worked as it should 
 #test_set <- full_data[,c("copied_prestigious","copied_prestigious_art","round","copied_prestigious_weight","copied_prestigious_lang","copied_prestigious_geog","is_model_id")]
-test_set <- full_data[,c("number","round","u_network","Contents","Origin","topic","topic_seen","copied_prestigious_geog","is_model_id")]
+test_set <- full_data[,c("number","round","u_network","Contents","Origin","topic","topic_seen","info_chosen","c_copies","c_copies_Geography","copied_prestigious_geog","is_model_id")]
 test_set <- test_set[test_set$round==2,]
 test_set$round<-NULL
 #test_set <- test_set[test_set$is_model_id==TRUE,]
@@ -320,7 +320,7 @@ for (i in 1:length(u_origins)) {
 #####
 ##### SKIP TO HERE IN FUTURE
 #write.csv(full_data, file="full_data.csv", row.names = FALSE)
-#full_data <- read.csv("full_data.csv")
+full_data <- read.csv("full_data.csv")
 # saveRDS(full_data, "full_data")
 
 #####
@@ -412,3 +412,9 @@ for (i in 1:length(u_origins)) {
 asocialOnly_2 <- full_data_R2[full_data_R2$copying=="FALSE",]
 
 finalScore_R2 <- asocialOnly_2[asocialOnly_2$number==100,]
+
+#sample sizes
+table(finalScore$condition)
+
+
+
