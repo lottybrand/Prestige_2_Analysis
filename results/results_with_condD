@@ -1,6 +1,57 @@
 
 
-Prediction 1: correlations
+Prediction 1: correlations: 
+
+ART
+> cor.test(finalScore$c_a_Art, finalScore$c_a_Art_r2)$estimate[[1]]^2
+[1] 0.507754
+> cor.test(finalScore$c_a_Art, finalScore$c_a_Geog_r2)$estimate[[1]]^2
+[1] 0.3069396
+> cor.test(finalScore$c_a_Art, finalScore$c_a_Lang_r2)$estimate[[1]]^2
+[1] 0.297016
+> cor.test(finalScore$c_a_Art, finalScore$c_a_Weight_r2)$estimate[[1]]^2
+[1] 0.2238027
+
+GEOG
+> cor.test(finalScore$c_a_Geography, finalScore$c_a_Geog_r2)$estimate[[1]]^2
+[1] 0.2186337
+> cor.test(finalScore$c_a_Geography, finalScore$c_a_Art_r2)$estimate[[1]]^2
+[1] 0.1860895
+> cor.test(finalScore$c_a_Geography, finalScore$c_a_Lang_r2)$estimate[[1]]^2
+[1] 0.1792579
+> cor.test(finalScore$c_a_Geography, finalScore$c_a_Weight_r2)$estimate[[1]]^2
+[1] 0.08562347
+
+WEIGHT
+> cor.test(finalScore$c_a_Weight, finalScore$c_a_Weight_r2)$estimate[[1]]^2
+[1] 0.3201149
+> cor.test(finalScore$c_a_Weight, finalScore$c_a_Geog_r2)$estimate[[1]]^2
+[1] 0.1459409
+> cor.test(finalScore$c_a_Weight, finalScore$c_a_Art_r2)$estimate[[1]]^2
+[1] 0.1462641
+> cor.test(finalScore$c_a_Weight, finalScore$c_a_Lang_r2)$estimate[[1]]^2
+[1] 0.1394238
+
+LANG
+> cor.test(finalScore$c_a_Language, finalScore$c_a_Lang_r2)$estimate[[1]]^2
+[1] 0.3447042
+> cor.test(finalScore$c_a_Language, finalScore$c_a_Weight_r2)$estimate[[1]]^2
+[1] 0.1771926
+> cor.test(finalScore$c_a_Language, finalScore$c_a_Art_r2)$estimate[[1]]^2
+[1] 0.2488064
+> cor.test(finalScore$c_a_Language, finalScore$c_a_Geog_r2)$estimate[[1]]^2
+[1] 0.2556297
+
+TOTALS
+> cor.test(finalScore$c_a_score_r1, finalScore$c_a_Weight_r2)$estimate[[1]]^2
+[1] 0.2979194
+> cor.test(finalScore$c_a_score_r1, finalScore$c_a_Geog_r2)$estimate[[1]]^2
+[1] 0.3529284
+> cor.test(finalScore$c_a_score_r1, finalScore$c_a_Art_r2)$estimate[[1]]^2
+[1] 0.4069635
+> cor.test(finalScore$c_a_score_r1, finalScore$c_a_Lang_r2)$estimate[[1]]^2
+[1] 0.3659662
+
 
 Prediction 2: copied successful
 

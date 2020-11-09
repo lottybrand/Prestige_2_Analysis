@@ -384,7 +384,8 @@ precis(list(diff_ca_5=diff_ca_5, diff_ba_5=diff_ba_5, diff_cb_5=diff_cb_5, diff_
 
 
 
-#Round 2 score: 
+#Maybe try looking at just ... Round 2 score but think this is less relevant for this exp
+#try looking at old R2 script from data_cleaning in old exp: 
 
 finalScore_R2 <- as.data.frame(finalScore_R2)
 
