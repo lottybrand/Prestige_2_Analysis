@@ -207,12 +207,14 @@ model3.1 <- ulam(
   warmup=1000, iter=9000, chains=3 , cores=3 , log_lik=TRUE )
 
 precis(model3.1, depth = 2)
-precis(model3.1, pars = c('b[1]', 'b[2]', 'b[3]'), depth=2)
+precis(model3.1, pars = c('b[1]', 'b[2]', 'b[3]', 'b[4]'), depth=2)
 traceplot(model3.1)
+#traceplots look fine but might be worth running without group effects to check the same outcome
 
 #plotting condition effects, (pp 333 in 2nd edition)
-mainFig <- plot(precis(model3, depth = 2), pars=c('a_bar',"b[2]","b[1]","b[3]"), labels=c("intercept","C ","A","B"), xlab="Model estimate")
+mainFig <- plot(precis(model3, depth = 2), pars=c('a_bar',"b[2]","b[1]","b[3]","b[4]"), labels=c("intercept","C ","A","B","D"), xlab="Model estimate")
 title("Participants Chose Predicted")
+dev.off
 
 #####
 #####
@@ -304,14 +306,17 @@ print(Sys.time())
 
 precis(model4.2)
 precis(model4.2, depth = 2)
-precis(model4.2, pars = c('a_bar','b[1]', 'b[2]', 'b[3]'), depth=2)
+precis(model4.2, pars = c('a_bar','b[1]', 'b[2]', 'b[3]', 'b[4]'), depth=2)
 traceplot(model4)
 
 post <- extract.samples(model4)
-diff_ab <- post$b[,1] - post$b[,2]
-diff_ac <- post$b[,3] - post$b[,2]
-diff_bc <- post$b[,1] - post$b[,3]
-precis(list(diff_ab=diff_ab, diff_ac=diff_ac, diff_bc=diff_bc))
+diff_ca <- post$b[,1] - post$b[,2]
+diff_ba <- post$b[,3] - post$b[,2]
+diff_cb <- post$b[,1] - post$b[,3]
+diff_cd <- post$b[,1] - post$b[,4]
+diff_bd <- post$b[,3] - post$b[,4]
+diff_ad <- post$b[,2] - post$b[,4]
+precis(list(diff_ca=diff_ca, diff_ba=diff_ba, diff_cb=diff_cb, diff_cd=diff_cd, diff_bd=diff_bd, diff_ad=diff_ad))
 
 #####
 #####
@@ -365,14 +370,17 @@ model5 <- map2stan(
   ), data = finalScore_list, chains=3)
 
 precis(model5)
-precis(model5, pars = c('b[1]', 'b[2]', 'b[3]'), depth=2)
+precis(model5, pars = c('b[1]', 'b[2]', 'b[3]','b[4]'), depth=2)
 tapply(finalScore_list$t_score, list(finalScore_list$condsIndex),mean)
 
 post5 <- extract.samples(model5)
-diff_ab_5 <- post5$b[,1] - post5$b[,2]
-diff_ac_5 <- post5$b[,3] - post5$b[,2]
-diff_bc_5 <- post5$b[,1] - post5$b[,3]
-precis(list(diff_ab_5=diff_ab_5, diff_ac_5=diff_ac_5, diff_bc_5=diff_bc_5))
+diff_ca_5 <- post5$b[,1] - post5$b[,2]
+diff_ba_5 <- post5$b[,3] - post5$b[,2]
+diff_cb_5 <- post5$b[,1] - post5$b[,3]
+diff_dc_5 <- post5$b[,4] - post5$b[,1]
+diff_da_5 <- post5$b[,4] - post5$b[,2]
+diff_db_5 <- post5$b[,4] - post5$b[,3]
+precis(list(diff_ca_5=diff_ca_5, diff_ba_5=diff_ba_5, diff_cb_5=diff_cb_5, diff_dc_5=diff_dc_5, diff_da_5=diff_da_5, diff_db_5=diff_db_5 ))
 
 
 
