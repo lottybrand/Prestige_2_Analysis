@@ -6,7 +6,8 @@
 #library(devtools)
 #devtools::install_github("rmcelreath/rethinking",ref="Experimental")
 #library(rethinking)
-
+#library(scales)
+#library(ggplot2)
 #source('dallinger_data_cleaning.R') 
 
 #####
@@ -159,22 +160,23 @@ infoChosen_list <- list(
   groupIndex = infoChosen$groupIndex,
   condsIndex = infoChosen$condsIndex )
 
-model3 <- ulam(
-  alist(
-    chosePredicted ~ dbinom( 1 , p ) ,
-    logit(p) <- a[pptIndex] + g[groupIndex] + b[condsIndex] ,
-    b[condsIndex] ~ dnorm( 0 , 0.5 ),
-    a[pptIndex] ~ dnorm( a_bar , sigma_a ),
-    g[groupIndex] ~ dnorm( 0 , sigma_g ),
-    a_bar ~ dnorm( 0 , 1.5 ),
-    sigma_a ~ dexp(1),
-    sigma_g ~ dexp(1),
-    sigma_b ~ dexp(1)
-  ) , data=infoChosen_list, constraints=list(sigma_a="lower=0", sigma_g="lower=0", sigma_b="lower=0"), 
-  warmup=1000, iter=4000, chains=3 , cores=3 , log_lik=TRUE )
-
-precis(model3)
-precis(model3, pars = c('a_bar','b[1]', 'b[2]', 'b[3]','b[4]'), depth=2)
+### we used the model3.1 version for inference and predictions as on page 432 in 2nd edition rethinking
+# model3 <- ulam(
+#   alist(
+#     chosePredicted ~ dbinom( 1 , p ) ,
+#     logit(p) <- a[pptIndex] + g[groupIndex] + b[condsIndex] ,
+#     b[condsIndex] ~ dnorm( 0 , 0.5 ),
+#     a[pptIndex] ~ dnorm( a_bar , sigma_a ),
+#     g[groupIndex] ~ dnorm( 0 , sigma_g ),
+#     a_bar ~ dnorm( 0 , 1.5 ),
+#     sigma_a ~ dexp(1),
+#     sigma_g ~ dexp(1),
+#     sigma_b ~ dexp(1)
+#   ) , data=infoChosen_list, constraints=list(sigma_a="lower=0", sigma_g="lower=0", sigma_b="lower=0"), 
+#   warmup=1000, iter=4000, chains=3 , cores=3 , log_lik=TRUE )
+# 
+# precis(model3)
+# precis(model3, pars = c('a_bar','b[1]', 'b[2]', 'b[3]','b[4]'), depth=2)
 
 #plotting predictions based on conds: (pp 332 in 2nd edition )
 post <- extract.samples(model3)
@@ -182,9 +184,15 @@ p_conds <- inv_logit( post$b )
 plot( precis( as.data.frame(p_conds) ) , xlim=c(0,1) )
 
 #plot raw counts
-ggplot(infoChosen, aes(x=condition, fill=info_chosen)) +
-  geom_histogram(position="dodge", stat="count") + 
-  theme_bw()
+#ggplot(infoChosen, aes(x=condition, fill=info_chosen)) +
+#  geom_histogram(position="dodge", stat="count") + 
+#  theme_bw()
+
+ggplot(data = round2) + 
+  geom_bar(mapping = aes(x = condition, fill = info_chosen)) +
+  labs(fill = "Participant Choice") +
+  xlab("Conditions") + ylab("Total times chosen") +
+  theme_bw() + scale_fill_manual(labels = c("Random Cue", "Domain-general prestige","Cross-domain prestige","Domain-specific prestige"), values=cbbPalette)
 
 
 #plotting condition effects, (pp 333 in 2nd edition)
@@ -212,7 +220,51 @@ traceplot(model3.1)
 #traceplots look fine but might be worth running without group effects to check the same outcome
 
 #plotting condition effects, (pp 333 in 2nd edition)
-mainFig <- plot(precis(model3, depth = 2), pars=c('a_bar',"b[2]","b[1]","b[3]","b[4]"), labels=c("intercept","C ","A","B","D"), xlab="Model estimate")
+mainFig <- plot(precis(model3, depth = 2), pars=c('a_bar',"b[2]","b[3]","b[1]","b[4]"), labels=c("intercept","A ","B","C","D"), xlab="Model estimate")
+title("Participants Chose Predicted")
+dev.off
+
+#plotting predictions based on conds: (pp 332 in 2nd edition )
+post <- extract.samples(model3.1)
+p_conds <- inv_logit( post$b )
+p_conds <- as.data.frame(p_conds)
+colnames(p_conds)[1] <- "Condition C"
+colnames(p_conds)[2] <- "Condition A"
+colnames(p_conds)[3] <- "Condition B"
+colnames(p_conds)[4] <- "Condition D"
+plot( precis( as.data.frame(p_conds) ) , xlim=c(-1,1), xlab = "Predicted model estimates", main = "Participants Made Predicted Choice", pars=c("Condition A","Condition B","Condition C", "Condition D") )
+
+
+### model 3.2 trying to copy m11.4 in edition 2
+
+model3.2 <- ulam(
+  alist(
+    chosePredicted ~ dbinom( 1 , p ) ,
+    logit(p) <- a[pptIndex] + g[groupIndex] + b[condsIndex] ,
+    b[condsIndex] ~ dnorm( 0 , sigma_b ),
+    a[pptIndex] ~ dnorm( 0 , sigma_a ),
+    g[groupIndex] ~ dnorm( 0 , sigma_g ),
+    sigma_a ~ dexp(1),
+    sigma_g ~ dexp(1),
+    sigma_b ~ dexp(1)
+  ) , data=infoChosen_list, constraints=list(sigma_a="lower=0", sigma_g="lower=0", sigma_b="lower=0"), control=list( adapt_delta=0.99, max_treedepth=13), 
+  warmup=1000, iter=9000, chains=3 , cores=3 , log_lik=TRUE )
+
+precis(model3.2, depth = 2)
+precis(model3.2, pars = c('b[1]', 'b[2]', 'b[3]', 'b[4]'), depth=2)
+
+post2 <- extract.samples(model3.2)
+p_conds2 <- inv_logit( post2$b )
+p_conds2 <- as.data.frame(p_conds2)
+colnames(p_conds2)[1] <- "Condition C"
+colnames(p_conds2)[2] <- "Condition A"
+colnames(p_conds2)[3] <- "Condition B"
+colnames(p_conds2)[4] <- "Condition D"
+plot( precis( as.data.frame(p_conds2) ) , xlim=c(0,1), xlab = "Predicted model estimates", main = "Participants Made Predicted Choice", pars=c("Condition A","Condition B","Condition C", "Condition D") )
+
+traceplot(model3.2)
+
+mainFig <- plot(precis(model3.2, depth = 2), pars=c("b[2]","b[3]","b[1]","b[4]"), xlim=c(0,4), labels=c("A ","B","C","D"), xlab="Model estimate")
 title("Participants Chose Predicted")
 dev.off
 

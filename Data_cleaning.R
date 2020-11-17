@@ -361,7 +361,7 @@ asocialOnly <- full_data[full_data$copying=="FALSE",]
 ##### SUBSET OF COPYING ONLY:
 #####
 # this is redundant when can use model_ids instead
-copyOnly <-full_data[full_data$copying=="TRUE",]
+copyOnly <-full_data[full_data$is_model_id=="TRUE",]
 
 #####
 ##### Subset for seeing score info (Prediction 2)

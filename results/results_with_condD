@@ -79,7 +79,7 @@ b[4] -0.11 0.33 -0.68  0.30  1952    1
 
 Prediction 7:
 
-mean   sd  5.5% 94.5% n_eff Rhat
+	mean   sd  5.5% 94.5% n_eff Rhat
 a_bar -3.71 0.33 -4.25 -3.19  3135    1
 b[1]   0.32 0.37 -0.29  0.91  3340    1
 b[2]   0.28 0.37 -0.32  0.87  3283    1
@@ -88,7 +88,7 @@ b[4]  -0.96 0.38 -1.55 -0.34  3540    1
 
 diff copying rates between conditions? 
 
-mean   sd  5.5% 94.5%  histogram
+	mean   	sd  5.5% 94.5%  histogram
 diff_ca  0.06 0.54 -0.80  0.93 ▁▁▁▂▇▇▃▁▁▁
 diff_ba -0.51 0.54 -1.39  0.33 ▁▁▁▃▇▇▃▁▁▁
 diff_cb  0.57 0.54 -0.28  1.45 ▁▁▁▂▇▇▃▁▁▁
@@ -98,7 +98,7 @@ diff_ad  1.77 0.65  0.72  2.81 ▁▁▂▅▇▅▂▁▁▁
 
 Prediction 8: score higher in a and b compared to c and d
 
-mean   sd  5.5% 94.5% n_eff Rhat
+	mean   sd  5.5% 94.5% n_eff Rhat
 b[1]  0.38 0.47 -0.37  1.12  6837    1
 b[2]  0.19 0.47 -0.57  0.94  7502    1
 b[3]  0.26 0.48 -0.53  1.02  6252    1
