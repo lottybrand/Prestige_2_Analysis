@@ -260,7 +260,7 @@ colnames(p_conds2)[1] <- "Condition C"
 colnames(p_conds2)[2] <- "Condition A"
 colnames(p_conds2)[3] <- "Condition B"
 colnames(p_conds2)[4] <- "Condition D"
-plot( precis( as.data.frame(p_conds2) ) , xlim=c(0,1), xlab = "Predicted model estimates", main = "Participants Made Predicted Choice", pars=c("Condition A","Condition B","Condition C", "Condition D") )
+plot( precis( as.data.frame(p_conds2) ) , xlim=c(0,1), xlab = "Model predictions on the probability scale", main = "Participants Made Our Predicted Choice", pars=c("Condition A","Condition B","Condition C", "Condition D") )
 
 traceplot(model3.2)
 
@@ -479,15 +479,18 @@ model5.1 <- map2stan(
   ), data = finalScore_R2_list, chains=3)
 
 precis(model5.1)
-precis(model5.1, pars = c('b[1]', 'b[2]', 'b[3]'), depth=2)
+precis(model5.1, pars = c('b[1]', 'b[2]', 'b[3]', 'b[4]'), depth=2)
 tapply(finalScore_R2_list$t_score, list(finalScore_R2_list$condsIndex),mean)
 
 
 post5.1 <- extract.samples(model5.1)
-diff_ab_5.1 <- post5.1$b[,1] - post5.1$b[,2]
-diff_ac_5.1 <- post5.1$b[,3] - post5.1$b[,2]
-diff_bc_5.1 <- post5.1$b[,1] - post5.1$b[,3]
-precis(list(diff_ab_5.1=diff_ab_5.1, diff_ac_5.1=diff_ac_5.1, diff_bc_5.1=diff_bc_5.1))
+diff_ca_5.1 <- post5.1$b[,1] - post5.1$b[,2]
+diff_ba_5.1 <- post5.1$b[,3] - post5.1$b[,2]
+diff_cb_5.1 <- post5.1$b[,1] - post5.1$b[,3]
+diff_dc_5.1 <- post5.1$b[,4] - post5.1$b[,1]
+diff_da_5.1 <- post5.1$b[,4] - post5.1$b[,2]
+diff_db_5.1 <- post5.1$b[,4] - post5.1$b[,3]
+precis(list(diff_ca_5.1=diff_ca_5.1, diff_ba_5.1=diff_ba_5.1, diff_cb_5.1=diff_cb_5.1, diff_dc_5.1=diff_dc_5.1, diff_da_5.1=diff_da_5.1, diff_db_5.1=diff_db_5.1 ))
 
 
 # EXPLORATORY: 

@@ -433,5 +433,20 @@ finalScore <- asocialOnly[asocialOnly$number==100,]
 #sample sizes
 table(finalScore$condition)
 
+#what about just round 2's total scores:
+full_data_R2 <- full_data[full_data$round==2,]
+full_data_R2$t_score_r2 <- rep(-666, nrow(full_data_R2))
+u_origins <- unique(full_data_R2$u_origin)
+for (i in 1:length(u_origins)) {  
+  u_origin <- u_origins[i]
+  relevant_rows <- c(1:nrow(full_data_R2))[full_data_R2$u_origin == u_origin]
+  subset <- full_data_R2[relevant_rows,]
+  t_score_r2 <- cumsum(subset$score)
+  full_data_R2$t_score_r2[relevant_rows] <- t_score_r2
+}
+
+asocialOnly_final <- full_data_R2[full_data_R2$copying=="FALSE",]
+
+finalScore_R2 <- asocialOnly_final[asocialOnly_final$number==100,]
 
 
