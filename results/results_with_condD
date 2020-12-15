@@ -106,6 +106,24 @@ diff_cd  1.83 0.65  0.76  2.86 ▁▁▂▅▇▇▂▁▁▁
 diff_bd  1.26 0.61  0.29  2.24 ▁▁▂▅▇▅▂▁▁▁
 diff_ad  1.77 0.65  0.72  2.81 ▁▁▂▅▇▅▂▁▁▁
 
+> (tapply(asocialOnly_2$round, list(asocialOnly_2$condition),sum))/2
+   a    b    c    d 
+3240 3437 3377 3416
+> tapply(asocialOnly_2$copied, list(asocialOnly_2$condition),sum)
+  a   b   c   d 
+570 477 670 230 
+
+> 570/3240
+[1] 0.1759259
+> 477/3437
+[1] 0.1387838
+> 670/3377
+[1] 0.1984009
+> 230/3416
+[1] 0.06733021
+
+
+
 Prediction 8: score higher in a and b compared to c and d
 
 	mean   sd  5.5% 94.5% n_eff Rhat

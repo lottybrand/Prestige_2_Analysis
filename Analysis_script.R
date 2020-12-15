@@ -160,7 +160,7 @@ infoChosen_list <- list(
   groupIndex = infoChosen$groupIndex,
   condsIndex = infoChosen$condsIndex )
 
-### we used the model3.1 version for inference and predictions as on page 432 in 2nd edition rethinking
+### we used the model3.2 version for inference and predictions as on page 432 in 2nd edition rethinking
 # model3 <- ulam(
 #   alist(
 #     chosePredicted ~ dbinom( 1 , p ) ,
@@ -188,11 +188,18 @@ plot( precis( as.data.frame(p_conds) ) , xlim=c(0,1) )
 #  geom_histogram(position="dodge", stat="count") + 
 #  theme_bw()
 
+round2 <- copyOnly[copyOnly$round==2,]
+
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
 ggplot(data = round2) + 
   geom_bar(mapping = aes(x = condition, fill = info_chosen)) +
   labs(fill = "Participant Choice") +
   xlab("Conditions") + ylab("Total times chosen") +
-  theme_bw() + scale_fill_manual(labels = c("Random Cue", "Domain-general prestige","Cross-domain prestige","Domain-specific prestige"), values=cbbPalette)
+  theme_bw() +
+  theme(text = element_text(size=16), axis.text = element_text(size=14)) + 
+  scale_fill_manual(labels = c("Random Cue", "Domain-general prestige","Cross-domain prestige","Domain-specific prestige"), values=cbbPalette)
 
 
 #plotting condition effects, (pp 333 in 2nd edition)
@@ -317,6 +324,7 @@ asocialOnly_list_2 <- list(
   groupIndex = asocialOnly_2$groupIndex,
   condsIndex = asocialOnly_2$condsIndex )
 
+### Please note model 4.2 was used for inference due to reparameterisation
 model4 <- ulam(
   alist(
     copied ~ dbinom( 1 , p ) ,
@@ -491,73 +499,4 @@ diff_dc_5.1 <- post5.1$b[,4] - post5.1$b[,1]
 diff_da_5.1 <- post5.1$b[,4] - post5.1$b[,2]
 diff_db_5.1 <- post5.1$b[,4] - post5.1$b[,3]
 precis(list(diff_ca_5.1=diff_ca_5.1, diff_ba_5.1=diff_ba_5.1, diff_cb_5.1=diff_cb_5.1, diff_dc_5.1=diff_dc_5.1, diff_da_5.1=diff_da_5.1, diff_db_5.1=diff_db_5.1 ))
-
-
-# EXPLORATORY: 
-# model 5.2 , t_score <- t_copied
-
-finalScoreBC <- as.data.frame(finalScoreBC)
-
-Ngroups = length(unique(finalScoreBC$u_network))
-Oldgroup <- finalScoreBC$u_network
-groupIndex <- array(0,length(finalScoreBC$u_network))
-for (index in 1:Ngroups){
-  groupIndex[Oldgroup == unique(Oldgroup)[index]] = index
-}
-finalScoreBC$groupIndex <- groupIndex
-finalScoreBC$groupIndex <- as.integer(finalScoreBC$groupIndex)
-
-finalScoreBC$t_score <- as.integer(finalScoreBC$t_score)
-
-finalScoreBC_list <- list(
-  t_score = finalScoreBC$t_score,
-  groupIndex = finalScoreBC$groupIndex,
-  t_copied = finalScoreBC$t_copied
-)
-
-
-model5.2 <- map2stan(
-  alist(
-    t_score ~ dnorm(mu, sigma),
-    mu <- a + b*t_copied + g[groupIndex],
-    a ~ dnorm(50,10),
-    b ~ dnorm(0,1),
-    g[groupIndex] ~ dnorm(0,1),
-    sigma ~ dexp(1)
-  ), data = finalScoreBC_list, chains=3)
-
-precis(model5.2)
-
-# control condition: 
-
-finalScoreA <- as.data.frame(finalScoreA)
-
-Ngroups = length(unique(finalScoreA$u_network))
-Oldgroup <- finalScoreA$u_network
-groupIndex <- array(0,length(finalScoreA$u_network))
-for (index in 1:Ngroups){
-  groupIndex[Oldgroup == unique(Oldgroup)[index]] = index
-}
-finalScoreA$groupIndex <- groupIndex
-finalScoreA$groupIndex <- as.integer(finalScoreA$groupIndex)
-
-finalScoreA$t_score <- as.integer(finalScoreA$t_score)
-
-finalScoreA_list <- list(
-  t_score = finalScoreA$t_score,
-  groupIndex = finalScoreA$groupIndex,
-  t_copied = finalScoreA$t_copied
-)
-
-model5.2.1 <- map2stan(
-  alist(
-    t_score ~ dnorm(mu, sigma),
-    mu <- a + b*t_copied + g[groupIndex],
-    a ~ dnorm(50,10),
-    b ~ dnorm(0,1),
-    g[groupIndex] ~ dnorm(0,1),
-    sigma ~ dexp(1)
-  ), data = finalScoreA_list, chains=3)
-
-precis(model5.2.1)
 

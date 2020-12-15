@@ -63,3 +63,26 @@ questions_data$age <- as.integer(questions_data$age)
 questions_data <- questions_data[!questions_data$age=="NA",]
 mean(questions_data$age)
 table(questions_data$gender)
+
+# comparing total copies (c_copies) with domain-specific copies
+# > mean(full_data$c_copies)
+# [1] 5.208357
+# > summary(full_data$c_copies)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 0.000   0.000   1.000   5.208   6.000  94.000 
+# > summary(full_data$c_copies_Art)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 0.000   0.000   0.000   1.038   0.000  61.000 
+# > summary(full_data$c_copies_Geography)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 0.000   0.000   0.000   1.883   2.000  40.000 
+# > summary(full_data$c_copies_Weight)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 0.0000  0.0000  0.0000  0.9592  1.0000 22.0000 
+# > summary(full_data$c_copies_Language)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 0.000   0.000   0.000   1.328   0.000  34.000 
+
+table(finalScore$condition)
+#a  b  c  d 
+#81 84 84 83 

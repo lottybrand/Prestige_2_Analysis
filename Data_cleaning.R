@@ -3,7 +3,7 @@
 # SKIP TO LINE 113 <<- ONLY NEED TO RUN THIS
 # source('data_inputting.R')
 
-#setwd("~/Desktop/Postdoc/Lottys_dallinger/Prestige_2_analysis")
+#setwd("~/Desktop/Postdoc/Dallinger_Two/Prestige_2_analysis")
 
 #####
 #assign first dataset to full_data:
