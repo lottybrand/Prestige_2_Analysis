@@ -88,29 +88,35 @@ finalScore <- asocialOnly[asocialOnly$number==100,]
 topicTable <- finalScore[,c("number","round","u_network","u_origin","topic","c_a_Geography","c_a_Weight","c_a_Art","c_a_Language","c_a_score_r1", "c_a_Geog_r2","c_a_Weight_r2","c_a_Art_r2","c_a_Lang_r2","c_a_score_r2")]
 
 
-cor.test(finalScore$c_a_Art, finalScore$c_a_Art_r2)$estimate[[1]]^2
-cor.test(finalScore$c_a_Art, finalScore$c_a_Geog_r2)$estimate[[1]]^2
-cor.test(finalScore$c_a_Art, finalScore$c_a_Lang_r2)$estimate[[1]]^2
-cor.test(finalScore$c_a_Art, finalScore$c_a_Weight_r2)$estimate[[1]]^2
+#predicting Art scores:
+cor.test(finalScore$c_a_Art, finalScore$c_a_Art_r2)$estimate[[1]]
+cor.test(finalScore$c_a_Geography, finalScore$c_a_Art_r2)$estimate[[1]]
+cor.test(finalScore$c_a_Language, finalScore$c_a_Art_r2)$estimate[[1]]
+cor.test(finalScore$c_a_Weight, finalScore$c_a_Art_r2)$estimate[[1]]
+cor.test(finalScore$c_a_score_r1, finalScore$c_a_Art_r2)$estimate[[1]]
 
-cor.test(finalScore$c_a_Geography, finalScore$c_a_Geog_r2)$estimate[[1]]^2
-cor.test(finalScore$c_a_Geography, finalScore$c_a_Art_r2)$estimate[[1]]^2
-cor.test(finalScore$c_a_Geography, finalScore$c_a_Lang_r2)$estimate[[1]]^2
-cor.test(finalScore$c_a_Geography, finalScore$c_a_Weight_r2)$estimate[[1]]^2
+#predicting Language scores:
+cor.test(finalScore$c_a_Language, finalScore$c_a_Lang_r2)$estimate[[1]]
+cor.test(finalScore$c_a_Art, finalScore$c_a_Lang_r2)$estimate[[1]]
+cor.test(finalScore$c_a_Geography, finalScore$c_a_Lang_r2)$estimate[[1]]
+cor.test(finalScore$c_a_Weight, finalScore$c_a_Lang_r2)$estimate[[1]]
+cor.test(finalScore$c_a_score_r1, finalScore$c_a_Lang_r2)$estimate[[1]]
 
-cor.test(finalScore$c_a_Language, finalScore$c_a_Lang_r2)$estimate[[1]]^2
-cor.test(finalScore$c_a_Language, finalScore$c_a_Weight_r2)$estimate[[1]]^2
-cor.test(finalScore$c_a_Language, finalScore$c_a_Art_r2)$estimate[[1]]^2
-cor.test(finalScore$c_a_Language, finalScore$c_a_Geog_r2)$estimate[[1]]^2
+#predicting Geog scores:
+cor.test(finalScore$c_a_Geography, finalScore$c_a_Geog_r2)$estimate[[1]]
+cor.test(finalScore$c_a_Art, finalScore$c_a_Geog_r2)$estimate[[1]]
+cor.test(finalScore$c_a_Language, finalScore$c_a_Geog_r2)$estimate[[1]]
+cor.test(finalScore$c_a_Weight, finalScore$c_a_Geog_r2)$estimate[[1]]
+cor.test(finalScore$c_a_score_r1, finalScore$c_a_Geog_r2)$estimate[[1]]
 
-cor.test(finalScore$c_a_Weight, finalScore$c_a_Weight_r2)$estimate[[1]]^2
-cor.test(finalScore$c_a_Weight, finalScore$c_a_Geog_r2)$estimate[[1]]^2
-cor.test(finalScore$c_a_Weight, finalScore$c_a_Art_r2)$estimate[[1]]^2
-cor.test(finalScore$c_a_Weight, finalScore$c_a_Lang_r2)$estimate[[1]]^2
+#predicting Weight scores:
+cor.test(finalScore$c_a_Weight, finalScore$c_a_Weight_r2)$estimate[[1]]
+cor.test(finalScore$c_a_Art, finalScore$c_a_Weight_r2)$estimate[[1]]
+cor.test(finalScore$c_a_Geography, finalScore$c_a_Weight_r2)$estimate[[1]]
+cor.test(finalScore$c_a_Language, finalScore$c_a_Weight_r2)$estimate[[1]]
+cor.test(finalScore$c_a_score_r1, finalScore$c_a_Weight_r2)$estimate[[1]]
 
-cor.test(finalScore$c_a_score_r1, finalScore$c_a_Weight_r2)$estimate[[1]]^2
-cor.test(finalScore$c_a_score_r1, finalScore$c_a_Geog_r2)$estimate[[1]]^2
-cor.test(finalScore$c_a_score_r1, finalScore$c_a_Art_r2)$estimate[[1]]^2
-cor.test(finalScore$c_a_score_r1, finalScore$c_a_Lang_r2)$estimate[[1]]^2
+
+
 
 
